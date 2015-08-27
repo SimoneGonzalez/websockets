@@ -7,42 +7,46 @@
 <body>
   <h1>Hello World!</h1>
   <form>
-    <input>
+    <input name="name" placeholder="Angelina Jolie">
+    <input name="text" placeholder="Message goes here">
     <input type="submit">
   </form>
   <ul></ul>
   <script src="/lib/socket.io-client/socket.io.js"></script>
   <script>
     var form = document.querySelector('form');
-    var input = document.querySelector('input');
+    var nameInput = document.querySelector('input[name="name"]');
+    var textInput = document.querySelector('input[name="text"]');
     var ul = document.querySelector('ul');
 
     form.addEventListener('submit', function () {
-      var text = input.value;
+      var name = nameInput.value;
+      var text = textInput.value;
 
-      socket.emit('chatMessage', {texts: text});
-      input.value = '';
+      socket.emit('chatMessage', {name: name, texts: text});
+      textInput.value = '';
       event.preventDefault();
     });
 
     var socket = io();
 
-    socket.on('connect', function (obj) {
-      console.log(socket.id);
-    });
+    // socket.on('connect', function (obj) {
+    //   console.log(socket.id);
+    // });
 
     socket.on('chatMessage', function (msg) {
       var li = genLIElemnt(msg);
 
       ul.appendChild(li);
-      console.log('Message received:', msg);
-    })
+    });
 
     function genLIElemnt (message) {
       var li = document.createElement('li');
-      var text = document.createTextNode(message.texts);
+      var name = message.name;
+      var text = message.texts;
+      var textNode = document.createTextNode(name + ': ' + text);
 
-      li.appendChild(text);
+      li.appendChild(textNode);
       return li;
     }
   </script>
